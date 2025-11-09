@@ -1,5 +1,6 @@
 ﻿using ExpenseTrackingSystem.Data;
 using ExpenseTrackingSystem.Entities;
+using ExpenseTrackingSystem.Models.ExpenseTypes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,56 +24,15 @@ namespace ExpenseTrackingSystem.Controllers
             return await _context.ExpenseTypes.ToListAsync();
         }
 
-        // GET: api/ExpenseType/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ExpenseType>> GetExpenseType(string id)
-        {
-            var expenseType = await _context.ExpenseTypes.FindAsync(id);
-
-            if (expenseType == null)
-            {
-                return NotFound();
-            }
-
-            return expenseType;
-        }
-
-        // PUT: api/ExpenseType/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutExpenseType(string id, ExpenseType expenseType)
-        {
-            if (id != expenseType.Name)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(expenseType).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ExpenseTypeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/ExpenseType
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ExpenseType>> PostExpenseType(ExpenseType expenseType)
+        public async Task<ActionResult<ExpenseType>> PostExpenseType(CreateExpenseTypeDto model)    
         {
+            var expenseType = new ExpenseType
+            {
+                Name = model.ExpenseType
+            };
             _context.ExpenseTypes.Add(expenseType);
             try
             {
@@ -91,22 +51,6 @@ namespace ExpenseTrackingSystem.Controllers
             }
 
             return CreatedAtAction("GetExpenseType", new { id = expenseType.Name }, expenseType);
-        }
-
-        // DELETE: api/ExpenseType/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteExpenseType(string id)
-        {
-            var expenseType = await _context.ExpenseTypes.FindAsync(id);
-            if (expenseType == null)
-            {
-                return NotFound();
-            }
-
-            _context.ExpenseTypes.Remove(expenseType);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool ExpenseTypeExists(string id)
