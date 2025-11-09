@@ -73,6 +73,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AuthenticationService>();
 builder.Services.AddScoped<ExpenseService>();
 builder.Services.AddScoped<ExpenseTypeService>();
 
