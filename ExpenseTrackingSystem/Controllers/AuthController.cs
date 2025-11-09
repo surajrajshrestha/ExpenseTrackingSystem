@@ -1,8 +1,5 @@
-﻿using ExpenseTrackingSystem.Data;
-using ExpenseTrackingSystem.Entities;
-using ExpenseTrackingSystem.Models.Login;
+﻿using ExpenseTrackingSystem.Models.Login;
 using ExpenseTrackingSystem.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackingSystem.Controllers
@@ -22,6 +19,13 @@ namespace ExpenseTrackingSystem.Controllers
         public IActionResult Login([FromBody] LoginRequest request)
         {
             var response = _authService.Login(request);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPost("change-password")]
+        public IActionResult ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var response = _authService.ChangePassword(request);
             return StatusCode(response.StatusCode, response);
         }
     }

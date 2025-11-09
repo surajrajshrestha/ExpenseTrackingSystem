@@ -15,6 +15,7 @@
 
 # Features
 - Login
+- Change Password
 - Register User
 - Add Expense
 - Add Expense Type

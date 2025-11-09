@@ -82,8 +82,88 @@ namespace ExpenseTrackingSystem.Services
                     };
                 }
             }
+        }
 
+        public ResponseModel<string> ChangePassword(ChangePasswordRequest request)
+        {
+            if(!string.Equals(request.NewPassword, request.ConfirmPassword))
+            {
+                return new ResponseModel<string>()
+                {
+                    StatusCode = StatusCodes.Status412PreconditionFailed,
+                    Messages = ["New Password and Confirm Password does not match."],
+                    Data = "New Password and Confirm Password does not match."
+                };
+            }
 
+            var user = _context.Users
+                .FirstOrDefault(u => u.Email == request.Email);
+
+            if (user == null)
+            {
+                return new ResponseModel<string>()
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                    Messages = ["User with the email was not found."],
+                    Data = ""
+                };
+            }
+
+            try
+            {
+                var result = _passwordHasher.VerifyHashedPassword(user, user.Password, request.CurrentPassword);
+                if (result == PasswordVerificationResult.Success)
+                {
+                    user.Password = _passwordHasher.HashPassword(user, request.NewPassword);
+                    _context.Users.Update(user);
+                    _context.SaveChanges();
+
+                    var token = _jwtService.GenerateToken(user);
+                    return new ResponseModel<string>()
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        Messages = ["Password changed successfully."],
+                        Data = token
+                    };
+                }
+                else
+                {
+                    return new ResponseModel<string>
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        Messages = ["Old password and Current Password does not match."],
+                        Data = "Old password and Current Password does not match."
+                    };
+                }
+            }
+            catch (FormatException)
+            {
+
+                if (user.Password == request.CurrentPassword)
+                {
+                    user.Password = _passwordHasher.HashPassword(user, request.NewPassword);
+                    _context.Users.Update(user);
+                    _context.SaveChanges();
+
+                    var token = _jwtService.GenerateToken(user);
+
+                    return new ResponseModel<string>
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        Messages = ["Password changed successfully."],
+                        Data = token
+                    };
+                }
+                else
+                {
+                    return new ResponseModel<string>
+                    {
+                        StatusCode = StatusCodes.Status200OK,
+                        Messages = ["Old password and Current Password does not match."],
+                        Data = "Unable to change password."
+                    };
+                }
+            }
         }
     }
 }
