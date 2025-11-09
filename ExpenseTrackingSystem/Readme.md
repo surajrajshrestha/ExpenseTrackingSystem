@@ -19,3 +19,8 @@
 - Add Expense
 - Add Expense Type
 - Generate Monthly Expense Report
+
+# RelationShips
+- User has many Expenses
+- An expense is of one ExpenseType
+- ExpenseReportItem belongs to User
