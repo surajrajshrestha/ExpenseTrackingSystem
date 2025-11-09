@@ -1,8 +1,8 @@
-﻿using ExpenseTrackingSystem.Data;
-using ExpenseTrackingSystem.Entities;
+﻿using ExpenseTrackingSystem.Entities;
 using ExpenseTrackingSystem.Models.Users;
+using ExpenseTrackingSystem.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTrackingSystem.Controllers
 {
@@ -10,31 +10,25 @@ namespace ExpenseTrackingSystem.Controllers
     [ApiController]
     public class UserController : BaseController
     {
-        private readonly ExpenseTrackerDB _context;
+        private readonly UserService _userService;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public UserController(ExpenseTrackerDB context)
+        public UserController(
+            UserService userService, 
+            IPasswordHasher<User> passwordHasher)
         {
-            _context = context;
+            _userService = userService;
+            _passwordHasher = passwordHasher;
         }
 
 
         // POST: api/User
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserDto model)
+        public IActionResult PostUser(UserDto model)
         {
-            var existingUser = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == model.Email);
-
-            if (existingUser == null)
-            {
-                existingUser = new User { Email = model.Email, Password = model.Password };
-                _context.Users.Add(existingUser);
-                await _context.SaveChangesAsync();
-                return CreatedAtAction("GetUser", new { id = existingUser.Id }, existingUser);
-            }
-            
-            return Conflict("User with this email already exists.");
+            var response = _userService.CreateUser(model);
+            return StatusCode(response.StatusCode, response);
         }
     }
 }
