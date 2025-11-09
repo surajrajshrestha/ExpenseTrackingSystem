@@ -1,6 +1,5 @@
-﻿using ExpenseTrackingSystem.Data;
-using ExpenseTrackingSystem.Entities;
-using ExpenseTrackingSystem.Models.Expenses;
+﻿using ExpenseTrackingSystem.Models.Expenses;
+using ExpenseTrackingSystem.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackingSystem.Controllers
@@ -9,33 +8,22 @@ namespace ExpenseTrackingSystem.Controllers
     [ApiController]
     public class ExpenseController : BaseController
     {
-        private readonly ExpenseTrackerDB _context;
+        private readonly ExpenseService _service;
 
-        public ExpenseController(ExpenseTrackerDB context)
+        public ExpenseController(ExpenseService service)
         {
-            _context = context;
+            _service = service;
         }
+
 
         // POST: api/Expense
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Expense>> PostExpense(CreateExpenseDto model)
+        public IActionResult Create(CreateExpenseDto model)
         {
-            var expense = new Expense
-            {
-                Id = Guid.NewGuid(),
-                UserId = GetLoggedInUser(),
-                Amount = model.Amount,
-                Description = model.Description,
-                Date = model.Date,
-                ExpenseType = model.ExpenseType,
-                CreatedOnUtc = DateTime.UtcNow
-            };
+            var expense = _service.CreateExpense(model, GetLoggedInUser());
 
-            _context.Expenses.Add(expense);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetExpense", new { id = expense.Id }, expense);
+            return StatusCode(StatusCodes.Status201Created, new { expense });
         }
     }
 }

@@ -10,8 +10,7 @@ namespace ExpenseTrackingSystem.Controllers
     public class BaseController : ControllerBase
     {
 
-        [HttpGet("GetLoggedInUser")]
-        public Guid GetLoggedInUser() {
+        protected Guid GetLoggedInUser() {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ??
                 User.FindFirstValue(JwtRegisteredClaimNames.Sub);

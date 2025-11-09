@@ -1,8 +1,6 @@
-﻿using ExpenseTrackingSystem.Data;
-using ExpenseTrackingSystem.Entities;
-using ExpenseTrackingSystem.Models.ExpenseTypes;
+﻿using ExpenseTrackingSystem.Models.ExpenseTypes;
+using ExpenseTrackingSystem.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTrackingSystem.Controllers
 {
@@ -10,52 +8,31 @@ namespace ExpenseTrackingSystem.Controllers
     [ApiController]
     public class ExpenseTypeController : BaseController
     {
-        private readonly ExpenseTrackerDB _context;
+        private readonly ExpenseTypeService _service;
 
-        public ExpenseTypeController(ExpenseTrackerDB context)
+        public ExpenseTypeController(ExpenseTypeService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/ExpenseType
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ExpenseType>>> GetExpenseTypes()
+        public IActionResult GetExpenseTypes()
         {
-            return await _context.ExpenseTypes.ToListAsync();
+            return Ok(_service.GetExpenseTypes());
         }
 
         // POST: api/ExpenseType
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ExpenseType>> PostExpenseType(CreateExpenseTypeDto model)    
+        public IActionResult CreateExpenseType(CreateExpenseTypeDto model)
         {
-            var expenseType = new ExpenseType
+            var expenseType = _service.CreateExpenseType(model);
+            if (expenseType.StatusCode == StatusCodes.Status201Created)
             {
-                Name = model.ExpenseType
-            };
-            _context.ExpenseTypes.Add(expenseType);
-            try
-            {
-                await _context.SaveChangesAsync();
+                return StatusCode(StatusCodes.Status201Created, new { expenseType });
             }
-            catch (DbUpdateException)
-            {
-                if (ExpenseTypeExists(expenseType.Name))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetExpenseType", new { id = expenseType.Name }, expenseType);
-        }
-
-        private bool ExpenseTypeExists(string id)
-        {
-            return _context.ExpenseTypes.Any(e => e.Name == id);
+            return StatusCode(expenseType.StatusCode, expenseType);
         }
     }
 }
