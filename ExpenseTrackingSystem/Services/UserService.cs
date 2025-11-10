@@ -11,7 +11,15 @@ namespace ExpenseTrackingSystem.Services
         private readonly ExpenseTrackerDB _context;
         private readonly IPasswordHasher<User> _passwordHasher;
 
-        public UserService(ExpenseTrackerDB context, IPasswordHasher<User> passwordHasher)
+        public UserService(ExpenseTrackerDB context)
+        {
+            _context = context;
+            _passwordHasher = new PasswordHasher<User>();
+        }
+
+        public UserService(
+            ExpenseTrackerDB context, 
+            IPasswordHasher<User> passwordHasher)
         {
             _context = context;
             _passwordHasher = passwordHasher;
@@ -48,5 +56,23 @@ namespace ExpenseTrackingSystem.Services
                 }
             };
         }
+
+        public ResponseModel<List<UserModel>> GetUsers()
+        {
+            var users = _context.Users
+                .Select(u => new UserModel
+                {
+                    Id = u.Id,
+                    Email = u.Email
+                }).ToList();
+
+            return new ResponseModel<List<UserModel>>
+            {
+                StatusCode = StatusCodes.Status200OK,
+                Messages = ["Users fetched successfully."],
+                Data = users
+            };
+        }
+
     }
 }

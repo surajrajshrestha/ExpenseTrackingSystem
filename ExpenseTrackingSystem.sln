@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTrackingSystem", "ExpenseTrackingSystem\ExpenseTrackingSystem.csproj", "{6FCE24D9-A355-4C2B-8421-E68890C04A3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpenseTrackingSystem.Tests", "ExpenseTrackingSystem.Tests\ExpenseTrackingSystem.Tests.csproj", "{2DDDDF76-E4A6-4E90-9186-23729317F166}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{6FCE24D9-A355-4C2B-8421-E68890C04A3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FCE24D9-A355-4C2B-8421-E68890C04A3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FCE24D9-A355-4C2B-8421-E68890C04A3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DDDDF76-E4A6-4E90-9186-23729317F166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DDDDF76-E4A6-4E90-9186-23729317F166}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DDDDF76-E4A6-4E90-9186-23729317F166}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DDDDF76-E4A6-4E90-9186-23729317F166}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
